@@ -1,0 +1,4 @@
+github.com/kamalshkeir/klog v1.0.0 h1:xZbYuYlDsEG5gfHPGNVms7wQmUFJCV0Uo2pwwaJBbws=
+github.com/kamalshkeir/klog v1.0.0/go.mod h1:Plp8wNXIbDTSgJmVOF/GiUftKihGqL6jvRAXPclbmV8=
+golang.org/x/text v0.4.0 h1:BrVqGRd7+k1DiOgtnFvAkoQEWQvBc25ouMJM6429SFg=
+golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
