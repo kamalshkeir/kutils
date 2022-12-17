@@ -16,7 +16,7 @@ import (
 	"github.com/kamalshkeir/kutils/kstring"
 )
 
-func DeleteFile(path string) error {
+func Delete(path string) error {
 	err := os.Remove("." + path)
 	if err != nil {
 		return err
@@ -25,7 +25,6 @@ func DeleteFile(path string) error {
 	}
 }
 
-// Parse body multipart
 func ParseMultipartForm(r *http.Request, size ...int64) (formData url.Values, formFiles map[string][]*multipart.FileHeader) {
 	s := int64(32 << 20)
 	if len(size) > 0 {
@@ -33,7 +32,7 @@ func ParseMultipartForm(r *http.Request, size ...int64) (formData url.Values, fo
 	}
 	parseErr := r.ParseMultipartForm(s)
 	if parseErr != nil {
-		klog.Printf("rdParse error = %v\n",parseErr)
+		klog.Printf("rdParse error = %v\n", parseErr)
 	}
 	defer func() {
 		err := r.MultipartForm.RemoveAll()
@@ -44,7 +43,6 @@ func ParseMultipartForm(r *http.Request, size ...int64) (formData url.Values, fo
 	return formData, formFiles
 }
 
-// UPLOAD Multipart FILE
 func UploadMultipart(file multipart.File, filename string, outPath string, acceptedFormats ...string) (string, error) {
 	//create destination file making sure the path is writeable.
 	if outPath != "" {
@@ -52,7 +50,7 @@ func UploadMultipart(file multipart.File, filename string, outPath string, accep
 			outPath += "/"
 		}
 	} else {
-		outPath="./uploads/"
+		outPath = "./uploads/"
 	}
 	err := os.MkdirAll(outPath, 0770)
 	if err != nil {
@@ -64,7 +62,7 @@ func UploadMultipart(file multipart.File, filename string, outPath string, accep
 		l = acceptedFormats
 	}
 
-	if _,ok := kstring.Contains(filename, l...);ok {
+	if _, ok := kstring.Contains(filename, l...); ok {
 		dst, err := os.Create(outPath + filename)
 		if err != nil {
 			return "", err
@@ -83,7 +81,6 @@ func UploadMultipart(file multipart.File, filename string, outPath string, accep
 	}
 }
 
-// UPLOAD FILE
 func UploadBytes(fileData []byte, filename string, outPath string, acceptedFormats ...string) (string, error) {
 	//create destination file making sure the path is writeable.
 	if outPath == "" {
@@ -103,7 +100,7 @@ func UploadBytes(fileData []byte, filename string, outPath string, acceptedForma
 		l = acceptedFormats
 	}
 
-	if _,ok := kstring.Contains(filename, l...);ok {
+	if _, ok := kstring.Contains(filename, l...); ok {
 		dst, err := os.Create(outPath + filename)
 		if err != nil {
 			return "", err
@@ -150,7 +147,7 @@ func Upload(received_filename, folder_out string, r *http.Request, acceptedForma
 	if len(acceptedFormats) == 0 {
 		acceptedFormats = []string{"jpg", "jpeg", "png", "json"}
 	}
-	if _,ok := kstring.Contains(header.Filename, acceptedFormats...);ok {
+	if _, ok := kstring.Contains(header.Filename, acceptedFormats...); ok {
 		dst, err := os.Create(folder_out + "/" + header.Filename)
 		if err != nil {
 			return "", nil, err
@@ -171,7 +168,7 @@ func UploadMany(received_filenames []string, folder_out string, r *http.Request,
 	datas := [][]byte{}
 	for inputName, files := range formFiles {
 		var buff bytes.Buffer
-		_,okContainSlice := kslice.Contains(received_filenames, inputName)
+		_, okContainSlice := kslice.Contains(received_filenames, inputName)
 		if len(files) > 0 && okContainSlice {
 			for _, f := range files {
 				file, err := f.Open()
@@ -195,7 +192,7 @@ func UploadMany(received_filenames []string, folder_out string, r *http.Request,
 				if len(acceptedFormats) == 0 {
 					acceptedFormats = []string{"jpg", "jpeg", "png", "json"}
 				}
-				if _,ok := kstring.Contains(f.Filename, acceptedFormats...);ok {
+				if _, ok := kstring.Contains(f.Filename, acceptedFormats...); ok {
 					dst, err := os.Create(folder_out + "/" + f.Filename)
 					if err != nil {
 						return nil, nil, err
@@ -207,7 +204,7 @@ func UploadMany(received_filenames []string, folder_out string, r *http.Request,
 					urls = append(urls, url)
 					datas = append(datas, []byte(data_string))
 				} else {
-					klog.Printf("%s not handled\n",f.Filename)
+					klog.Printf("%s not handled\n", f.Filename)
 					return nil, nil, fmt.Errorf("expecting filename to finish to be %v", acceptedFormats)
 				}
 			}
@@ -237,7 +234,6 @@ func CopyDir(source, destination string) error {
 	})
 	return err
 }
-
 
 func PathExists(path string) bool {
 	if _, err := os.Stat(path); err != nil {

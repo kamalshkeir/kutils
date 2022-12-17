@@ -82,3 +82,76 @@ func Contains[T comparable](elems []T, vs ...T) ([]int, bool) {
 		return idx, false
 	}
 }
+
+func Map[T1, T2 any](s []T1, f func(T1) T2) []T2 {
+	r := make([]T2, len(s))
+	for i, v := range s {
+		r[i] = f(v)
+	}
+	return r
+}
+
+func Reduce[T1, T2 any](s []T1, initializer T2, f func(T2, T1) T2) T2 {
+	r := initializer
+	for _, v := range s {
+		r = f(r, v)
+	}
+	return r
+}
+
+func Filter[T any](s []T, f func(T) bool) []T {
+	var r []T
+	for _, v := range s {
+		if f(v) {
+			r = append(r, v)
+		}
+	}
+	return r
+}
+
+func Append[T any](s []T, t ...T) []T {
+	lens := len(s)
+	tot := lens + len(t)
+	if tot < 0 {
+		panic("Append: cap out of range")
+	}
+	if tot > cap(s) {
+		news := make([]T, tot, tot+tot/2)
+		copy(news, s)
+		s = news
+	}
+	s = s[:tot]
+	copy(s[lens:], t)
+	return s
+}
+
+type Numeric interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
+		~float32 | ~float64 |
+		~complex64 | ~complex128
+}
+
+type NumericAbs[T any] interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
+		~float32 | ~float64 |
+		~complex64 | ~complex128
+	Abs() T
+}
+
+func DotProduct[T Numeric](s1, s2 []T) T {
+	if len(s1) != len(s2) {
+		panic("DotProduct: slices of unequal length")
+	}
+	var r T
+	for i := range s1 {
+		r += s1[i] * s2[i]
+	}
+	return r
+}
+
+func AbsDifference[T NumericAbs[T]](a, b T) T {
+	d := a - b
+	return d.Abs()
+}
